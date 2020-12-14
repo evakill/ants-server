@@ -13,4 +13,17 @@ router.get('/:id', async (req, res, next) => {
     }
 })
 
+router.get('/', async (req, res, next) => {
+    try {
+        const org = await Org.find({});
+        // console.log(org);
+        // if (!org) next({ status: 404, err: 'Organization not found'})
+        res.send({ data: org })
+    } catch (err) {
+        console.log("error!");
+        return next({ status: 500, message: 'Error getting org' })
+    }
+})
+
+
 module.exports = router
