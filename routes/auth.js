@@ -18,16 +18,14 @@ router.post('/login', async (req, res, next) => {
 
 router.post('/signup', async (req, res, next) => {
     const { userType, username, password, name } = req.body
-    console.log(userType, username)
     const account = userType == 'user' ? await User.findOne({ username }) : await Org.findOne({ username })
-    console.log(account)
     if (account) return next({ status: 403, message: 'Username is taken'})
 
     return bcrypt.hash(password, saltRounds, async (err, hash) => {
         let newAccount = userType == 'user' ? (
             new User({
                 username,
-                password
+                password: hash
             })
         ) : (
             new Org({
