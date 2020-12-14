@@ -6,6 +6,7 @@ var logger = require('morgan')
 
 var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/users')
+var orgsRouter = require('./routes/orgs')
 var authRouter = require('./routes/auth')
 
 var app = express()
@@ -23,8 +24,18 @@ app.use(express.static(path.join(__dirname, 'public')))
 const mongoose = require('mongoose')
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
+app.use((_, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept'
+    )
+    next()
+})
+
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
+app.use('/orgs', orgsRouter)
 app.use('/auth', authRouter)
 
 // catch 404 and forward to error handler

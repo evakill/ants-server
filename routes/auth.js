@@ -1,32 +1,43 @@
 var express = require('express')
 var router = express.Router()
 var User = require('../models/User.js')
+var Org = require('../models/Org.js')
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 
 router.post('/login', async (req, res, next) => {
-    const { username, password } = req.body
-    const user = await User.findOne({ username })
-    if (!user) return next({ status: 403, message: 'Incorrect username' })
-    bcrypt.compare(password, user.password, function(err, result) {
+    const { username, password, userType } = req.body
+
+    const account = userType == 'user' ? await User.findOne({ username }) : await Org.findOne({ username })
+    if (!account) return next({ status: 403, message: 'Incorrect username' })
+    return bcrypt.compare(password, account.password, function(err, result) {
         if (!result) return next({ status: 403, message: 'Incorrect password'})
-        res.send({ user })
+        return res.send({ account })
     })
 })
 
 router.post('/signup', async (req, res, next) => {
-    const { username, password } = req.body
-    const user = await User.findOne({ username })
-    if (user) return next({ status: 403, message: 'Username is taken'})
+    const { userType, username, password, name } = req.body
+    console.log(userType, username)
+    const account = userType == 'user' ? await User.findOne({ username }) : await Org.findOne({ username })
+    console.log(account)
+    if (account) return next({ status: 403, message: 'Username is taken'})
 
-    bcrypt.hash(password, saltRounds, async (err, hash) => {
-        console.log('in hash')
-        let newUser = new User({
-            username,
-            password: hash
-        })
-        newUser = await newUser.save()
-        return res.send({ user: newUser })
+    return bcrypt.hash(password, saltRounds, async (err, hash) => {
+        let newAccount = userType == 'user' ? (
+            new User({
+                username,
+                password
+            })
+        ) : (
+            new Org({
+                username,
+                password: hash,
+                name
+            })
+        )
+        newAccount = await newAccount.save()
+        return res.send({ account: newAccount })
     })
 })
 
