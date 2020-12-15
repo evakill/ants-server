@@ -25,6 +25,22 @@ router.get('/:id', async (req, res, next) => {
     }
 })
 
+// update profile
+router.post('/update/:id', async (req, res, next) => {
+  try {
+    const { interests, locations } = req.body
+    let org = await Org.findById(req.params.id)
+    if (!org) return next({ status: 404, message: 'Org not found' })
+    org.interests = interests
+    org.locations = locations
+    org = await org.save()
+    res.send({ org })
+  } catch (err) {
+    return next({ status: 500, message: 'Error updating org profile' })
+  }
+})
+
+// create post
 router.post('/post', async (req, res, next) => {
     try {
       const { orgid, title, description, type, location } = req.body
