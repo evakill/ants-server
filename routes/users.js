@@ -21,11 +21,11 @@ router.post('/followOrg', async (req, res, next) => {
     try {
         const user = await User.findOne({username: username});
         console.log("user: " + user);
-        const followedList = user.followedOrgs;
-        console.log(followedList);
+        const followedList = user.following;
+        console.log("list: " + followedList);
         if (!followedList.includes(orgID)) {
             followedList.push(orgID) 
-            updatedAccount = await User.findOneAndUpdate({username: username}, { $set: { followedOrgs: followedList}});
+            updatedAccount = await User.findOneAndUpdate({username: username}, { $set: { following: followedList}});
             return res.send({ account: updatedAccount });
         } else {
             return res.send({account: user});
@@ -42,7 +42,7 @@ router.post('/unfollowOrg', async (req, res, next) => {
 
     try {
         const user = await User.findOne({username: username});
-        const followedList = user.followedOrgs;
+        const followedList = user.following;
         console.log(followedList);
         if (followedList.includes(orgID)) {
             console.log(followedList);
@@ -51,7 +51,7 @@ router.post('/unfollowOrg', async (req, res, next) => {
             // followedList.push(orgID);
 
             console.log(followedList);
-            updatedAccount = await User.findOneAndUpdate({username: username}, { $set: { followedOrgs: followedList}});
+            updatedAccount = await User.findOneAndUpdate({username: username}, { $set: { following: followedList}});
             return res.send({ account: updatedAccount });
         } else {
             return res.send({account: user});

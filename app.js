@@ -22,7 +22,8 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 const mongoose = require('mongoose')
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect("mongodb+srv://jpesce:ants@cluster0.dhz01.mongodb.net/ants?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
+// mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 app.use((_, res, next) => {
     res.header('Access-Control-Allow-Origin', '*')
