@@ -1,7 +1,17 @@
-var express = require('express')
-var router = express.Router()
-var Org = require('../models/Org.js')
-var User = require('../models/User.js')
+const express = require('express')
+const router = express.Router()
+const Org = require('../models/Org.js')
+const Post = require('../models/Post.js')
+
+// get all orgs
+router.get('/', async (req, res, next) => {
+    try {
+        const org = await Org.find({});
+        res.send({ data: org })
+    } catch (err) {
+        return next({ status: 500, message: 'Error getting all orgs' })
+    }
+})
 
 // get org object from id param
 router.get('/:id', async (req, res, next) => {
@@ -10,19 +20,26 @@ router.get('/:id', async (req, res, next) => {
         if (!org) next({ status: 404, err: 'Organization not found'})
         res.send({ account: org })
     } catch (err) {
-        return next({ status: 500, message: 'Error getting org' })
+        return next({ status: 500, message: 'Error getting org by id' })
     }
 })
 
-router.get('/', async (req, res, next) => {
+router.post('/post', async (req, res, next) => {
     try {
-        const org = await Org.find({});
-        // console.log(org);
-        // if (!org) next({ status: 404, err: 'Organization not found'})
-        res.send({ data: org })
+      const { orgid, title, description, type, location } = req.body
+        const org = await Org.findById(orgid)
+        if (!org) next({ status: 404, err: 'Organization not found'})
+        let newPost = new Post({
+          title,
+          description,
+          type,
+          location,
+          org: orgid
+        })
+        newPost = await newPost.save()
+        res.send({ post: newPost })
     } catch (err) {
-        console.log("error!");
-        return next({ status: 500, message: 'Error getting org' })
+        return next({ status: 500, message: 'Error creating post' })
     }
 })
 

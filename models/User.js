@@ -22,10 +22,13 @@ var UserSchema = new Schema ({
     type: [String],
     required: false,
   },
-  followedOrgs: {
-    type: [String], 
-    required: false,
-  }
+  following: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Org',
+      required: false,
+    }
+  ]
 })
 
 module.exports = mongoose.model('User', UserSchema);

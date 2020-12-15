@@ -34,6 +34,13 @@ var OrgSchema = new Schema ({
     type: [String],
     required: false,
   },
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Post',
+      required: false,
+    }
+  ]
 })
 
 module.exports = mongoose.model('Org', OrgSchema)
