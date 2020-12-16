@@ -9,6 +9,7 @@ router.get('/:id', async (req, res, next) => {
         if (!user) return next({ status: 404, message: 'User not found' })
         res.send({ account: user })
     } catch (err) {
+        console.log('ERROR:', err)
         return next({ status: 500, message: 'Error getting user' })
     }
 })
