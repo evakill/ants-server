@@ -11,10 +11,9 @@ router.get('/:orgid', async (req, res, next) => {
 
 // get all posts liked by a user
 router.get('/liked/:userid', async (req, res, next) => {
-    const user = await User.findById(req.params.userid)
-    .populate({
+    const user = await User.findById(req.params.userid).populate({
         path: 'liked',
-        populate: { path: 'org' }
+        populate: { path: 'org' },
     })
     if (!user) return next({ message: 'User not found', status: 404 })
     res.send({ posts: user.liked })

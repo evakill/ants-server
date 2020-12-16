@@ -17,6 +17,7 @@ router.get('/', async (req, res, next) => {
 // get org object from id param
 router.get('/:id', async (req, res, next) => {
     try {
+        console.log('ID here: ' + req.params.id)
         const org = await Org.findById(req.params.id)
         if (!org) next({ status: 404, err: 'Organization not found' })
         res.send({ account: org })
