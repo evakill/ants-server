@@ -7,7 +7,7 @@ const User = require('../models/User.js')
 // get all orgs
 router.get('/', async (req, res, next) => {
     try {
-        const org = await Org.find({});
+        const org = await Org.find({})
         res.send({ data: org })
     } catch (err) {
         return next({ status: 500, message: 'Error getting all orgs' })
@@ -18,7 +18,7 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
     try {
         const org = await Org.findById(req.params.id)
-        if (!org) next({ status: 404, err: 'Organization not found'})
+        if (!org) next({ status: 404, err: 'Organization not found' })
         res.send({ account: org })
     } catch (err) {
         return next({ status: 500, message: 'Error getting org by id' })
@@ -27,31 +27,31 @@ router.get('/:id', async (req, res, next) => {
 
 // update profile
 router.post('/update/:id', async (req, res, next) => {
-  try {
-    const { interests, locations } = req.body
-    let org = await Org.findById(req.params.id)
-    if (!org) return next({ status: 404, message: 'Org not found' })
-    org.interests = interests
-    org.locations = locations
-    org = await org.save()
-    res.send({ org })
-  } catch (err) {
-    return next({ status: 500, message: 'Error updating org profile' })
-  }
+    try {
+        const { interests, locations } = req.body
+        let org = await Org.findById(req.params.id)
+        if (!org) return next({ status: 404, message: 'Org not found' })
+        org.interests = interests
+        org.locations = locations
+        org = await org.save()
+        res.send({ org })
+    } catch (err) {
+        return next({ status: 500, message: 'Error updating org profile' })
+    }
 })
 
 // create post
 router.post('/post', async (req, res, next) => {
     try {
-      const { orgid, title, description, type, location } = req.body
+        const { orgid, title, description, type, location } = req.body
         const org = await Org.findById(orgid)
-        if (!org) next({ status: 404, err: 'Organization not found'})
+        if (!org) next({ status: 404, err: 'Organization not found' })
         let newPost = new Post({
-          title,
-          description,
-          type,
-          location,
-          org: orgid
+            title,
+            description,
+            type,
+            location,
+            org: orgid,
         })
         newPost = await newPost.save()
         res.send({ post: newPost })
@@ -63,18 +63,18 @@ router.post('/post', async (req, res, next) => {
 //get followed orgs
 router.get('/followed/:username', async (req, res, next) => {
     //get user's followed list of ids
-    const userParam = req.params.username;
+    const userParam = req.params.username
     try {
-        const user = await User.findOne({username: userParam});
-        const followedList = user.following;
+        const user = await User.findOne({ username: userParam })
+        const followedList = user.following
 
         try {
             //get orgs
-            const org = await Org.find({});
+            const org = await Org.find({})
             //filter orgs by ones user follows
             var orgs = org.filter(function (o) {
-                return followedList.includes(o._id);
-            });
+                return followedList.includes(o._id)
+            })
             res.send({ data: orgs })
         } catch (err) {
             return next({ status: 500, message: 'Error getting org first' })
@@ -87,19 +87,19 @@ router.get('/followed/:username', async (req, res, next) => {
 //return whether an org is followed by a user or not
 router.get('/isfollowed/:username', async (req, res, next) => {
     //get user's followed list of ids
-    const userParam = req.params.username;
+    const userParam = req.params.username
     try {
-        const user = await User.findOne({username: userParam});
-        connsole.log(user);
-        const followedList = user.following;
+        const user = await User.findOne({ username: userParam })
+        connsole.log(user)
+        const followedList = user.following
 
         try {
             //get orgs
-            const org = await Org.find({});
+            const org = await Org.find({})
             //filter orgs by ones user follows
             var orgs = org.filter(function (o) {
-                return followedList.includes(o._id);
-            });
+                return followedList.includes(o._id)
+            })
             res.send({ data: orgs })
         } catch (err) {
             return next({ status: 500, message: 'Error getting org first' })
@@ -108,7 +108,5 @@ router.get('/isfollowed/:username', async (req, res, next) => {
         return next({ status: 500, message: 'Error getting org second' })
     }
 })
-
-
 
 module.exports = router
