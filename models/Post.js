@@ -20,6 +20,7 @@ var PostSchema = new Schema({
     },
     org: {
         type: Schema.Types.ObjectId,
+        ref: 'Org',
         required: true,
     },
     likes: [

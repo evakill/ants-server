@@ -5,13 +5,17 @@ var User = require('../models/User.js')
 
 // get all posts from an org
 router.get('/:orgid', async (req, res, next) => {
-    const posts = await Post.find({ org: req.params.orgid })
+    const posts = await Post.find({ org: req.params.orgid }).populate('org')
     res.send({ posts })
 })
 
 // get all posts liked by a user
 router.get('/liked/:userid', async (req, res, next) => {
-    const user = await User.findById(req.params.userid).populate('liked')
+    const user = await User.findById(req.params.userid)
+    .populate({
+        path: 'liked',
+        populate: { path: 'org' }
+    })
     if (!user) return next({ message: 'User not found', status: 404 })
     res.send({ posts: user.liked })
 })
