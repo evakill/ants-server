@@ -29,17 +29,14 @@ router.post('/update/:id', async (req, res, next) => {
   }
 })
 
-//follow org 
+//follow org
 router.post('/followOrg', async (req, res, next) => {
     const { username, orgID } = req.body;
-    console.log(username + "," + orgID);
     try {
         const user = await User.findOne({username: username});
-        console.log("user: " + user);
         const followedList = user.following;
-        console.log("list: " + followedList);
         if (!followedList.includes(orgID)) {
-            followedList.push(orgID) 
+            followedList.push(orgID)
             updatedAccount = await User.findOneAndUpdate({username: username}, { $set: { following: followedList}});
             return res.send({ account: updatedAccount });
         } else {
@@ -50,22 +47,15 @@ router.post('/followOrg', async (req, res, next) => {
     }
 })
 
-//unfollow org 
+//unfollow org
 router.post('/unfollowOrg', async (req, res, next) => {
-    const { username, orgID } = req.body;
-    console.log(username + "," + orgID);
+    const { username, orgID } = req.body
 
     try {
         const user = await User.findOne({username: username});
         const followedList = user.following;
-        console.log(followedList);
         if (followedList.includes(orgID)) {
-            console.log(followedList);
             followedList.splice(followedList.indexOf(orgID), 1);
-            // followedList.filter(x => !x.equals(orgID));
-            // followedList.push(orgID);
-
-            console.log(followedList);
             updatedAccount = await User.findOneAndUpdate({username: username}, { $set: { following: followedList}});
             return res.send({ account: updatedAccount });
         } else {

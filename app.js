@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/users')
 var orgsRouter = require('./routes/orgs')
 var authRouter = require('./routes/auth')
+var postsRouter = require('./routes/posts')
 
 var app = express()
 
@@ -37,6 +38,7 @@ app.use((_, res, next) => {
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
 app.use('/orgs', orgsRouter)
+app.use('/posts', postsRouter)
 app.use('/auth', authRouter)
 
 // catch 404 and forward to error handler

@@ -28,6 +28,13 @@ var UserSchema = new Schema ({
       ref: 'Org',
       required: false,
     }
+  ],
+  liked: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Post',
+      required: false,
+    }
   ]
 })
 
