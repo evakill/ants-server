@@ -20,7 +20,7 @@ router.post('/login', async (req, res, next) => {
 })
 
 router.post('/signup', async (req, res, next) => {
-    const { userType, username, password, name } = req.body
+    const { userType, username, password, name, link, description, image } = req.body
     const account =
         userType == 'user'
             ? await User.findOne({ username })
@@ -38,6 +38,9 @@ router.post('/signup', async (req, res, next) => {
                       username,
                       password: hash,
                       name,
+                      link, 
+                      description, 
+                      image
                   })
         newAccount = await newAccount.save()
         return res.send({ account: newAccount })
