@@ -9,6 +9,12 @@ router.get('/:orgid', async (req, res, next) => {
     res.send({ posts })
 })
 
+//get post by post id
+router.get('/post/:postid', async (req, res, next) => {
+    const post = await Post.findById(req.params.postid)
+    res.send({ post })
+})
+
 // get all posts liked by a user
 router.get('/liked/:userid', async (req, res, next) => {
     const user = await User.findById(req.params.userid).populate({

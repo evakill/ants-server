@@ -30,6 +30,26 @@ var PostSchema = new Schema({
             required: false,
         },
     ],
+    information: {
+        type: String, 
+        required: false,
+    },
+    link: {
+        type: String, 
+        required: false,
+    }, 
+    startDate: {
+        type: Date, 
+        required: false,
+    }, 
+    endDate: {
+        type: Date, 
+        required: false,
+    }, 
+    allDay: {
+        type: Boolean,
+        required: false,
+    }
 })
 
 module.exports = mongoose.model('Post', PostSchema)

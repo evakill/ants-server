@@ -53,6 +53,11 @@ router.post('/post', async (req, res, next) => {
             type,
             location,
             org: orgid,
+            information, 
+            link, 
+            startDate,
+            endDate, 
+            allDay
         })
         newPost = await newPost.save()
         res.send({ post: newPost })
