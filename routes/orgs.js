@@ -44,7 +44,7 @@ router.post('/update/:id', async (req, res, next) => {
 // create post
 router.post('/post', async (req, res, next) => {
     try {
-        const { orgid, title, description, type, location } = req.body
+        const { orgid, title, description, type, location, information, link, startDate, endDate, allDay } = req.body
         const org = await Org.findById(orgid)
         if (!org) next({ status: 404, err: 'Organization not found' })
         let newPost = new Post({
