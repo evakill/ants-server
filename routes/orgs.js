@@ -3,6 +3,25 @@ const router = express.Router()
 const Org = require('../models/Org.js')
 const Post = require('../models/Post.js')
 const User = require('../models/User.js')
+const multer = require('multer')
+const cloudinary = require('cloudinary').v2
+const { CloudinaryStorage } = require('multer-storage-cloudinary')
+
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET_KEY,
+})
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'user-uploads',
+        format: 'jpg',
+    },
+})
+
+const parser = multer({ storage: storage })
 
 // get all orgs
 router.get('/', async (req, res, next) => {
@@ -29,15 +48,37 @@ router.get('/:id', async (req, res, next) => {
 // update profile
 router.post('/update/:id', async (req, res, next) => {
     try {
-        const { interests, locations } = req.body
+        const { name, description, image, link, interests, locations } = req.body
         let org = await Org.findById(req.params.id)
         if (!org) return next({ status: 404, message: 'Org not found' })
-        org.interests = interests
-        org.locations = locations
+        if (interests) org.interests = interests
+        if (locations) org.locations = locations
+        if (name) org.name = name
+        if (description) org.description = description
+        if (image) org.image = image
+        if (link) org.link = link
         org = await org.save()
         res.send({ org })
     } catch (err) {
         return next({ status: 500, message: 'Error updating org profile' })
+    }
+})
+
+
+// upload image
+router.post('/img/:id', parser.single('image'), async (req, res, next) => {
+    try {
+        const org = await Org.findOneAndUpdate(
+            { _id: req.params.id },
+            { image: req.file.path },
+            { new: true }
+        )
+        if (!org) {
+            return next({ status: 404, message: 'User not found.' })
+        }
+        res.send({ org })
+    } catch (err) {
+        return next({ status: 500, message: 'Internal Error.' })
     }
 })
 
@@ -53,10 +94,10 @@ router.post('/post', async (req, res, next) => {
             type,
             location,
             org: orgid,
-            information, 
-            link, 
+            information,
+            link,
             startDate,
-            endDate, 
+            endDate,
             allDay
         })
         newPost = await newPost.save()
