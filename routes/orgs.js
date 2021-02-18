@@ -63,11 +63,11 @@ router.post('/post', async (req, res, next) => {
         })
         newPost = await newPost.save();
         const time = new Date();
-        const type = "post";
+        const metricType = "post";
         let newMetric = new Metric({
             orgid,
             time,
-            type
+            metricType
         });
         newMetric = await newMetric.save();
         res.send({ post: newPost });
