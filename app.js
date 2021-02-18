@@ -3,6 +3,7 @@ var express = require('express')
 var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
+const cors = require('cors')
 
 var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/users')
@@ -28,15 +29,30 @@ mongoose.connect(process.env.MONGODB_URI, {
     useUnifiedTopology: true,
 })
 
-app.use((_, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*')
-    res.header(
-        'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept'
-    )
-    next()
-})
+// Set up url whitelist and cors options for security
+var whitelist = [
+    'http://localhost:3000',
+    'https://ants-senior-design-frontend.herokuapp.com'
+]
+var corsOptions = {
+    origin: (origin, callback) => {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    },
+    allowedHeaders: [
+        'Content-Type',
+        'Origin',
+        'X-Requested-With',
+        'Accept',
+    ],
+    methods: ['POST', 'GET', 'OPTIONS'],
+}
 
+app.use(cors(corsOptions))
+app.options('*', (req, res) => res.sendStatus(200))
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
 app.use('/orgs', orgsRouter)
