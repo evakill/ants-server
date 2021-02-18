@@ -3,6 +3,7 @@ const router = express.Router()
 const Org = require('../models/Org.js')
 const Post = require('../models/Post.js')
 const User = require('../models/User.js')
+const Metric = require('../models/Metric.js')
 const multer = require('multer')
 const cloudinary = require('cloudinary').v2
 const { CloudinaryStorage } = require('multer-storage-cloudinary')
@@ -100,8 +101,16 @@ router.post('/post', async (req, res, next) => {
             endDate,
             allDay
         })
-        newPost = await newPost.save()
-        res.send({ post: newPost })
+        newPost = await newPost.save();
+        const time = new Date();
+        const metricType = "post";
+        let newMetric = new Metric({
+            username: "test user id",
+            timetsamp: time,
+            type: metricType
+        });
+        newMetric = await newMetric.save();
+        res.send({ post: newPost });
     } catch (err) {
         return next({ status: 500, message: 'Error creating post' })
     }
