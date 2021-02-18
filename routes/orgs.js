@@ -3,6 +3,8 @@ const router = express.Router()
 const Org = require('../models/Org.js')
 const Post = require('../models/Post.js')
 const User = require('../models/User.js')
+const Metric = require('../models/Metric.js')
+
 
 // get all orgs
 router.get('/', async (req, res, next) => {
@@ -63,6 +65,18 @@ router.post('/post', async (req, res, next) => {
         res.send({ post: newPost })
     } catch (err) {
         return next({ status: 500, message: 'Error creating post' })
+    }
+    try {
+        const time = new Date();
+        const type = "post";
+        let newMetric = new Metric({
+            orgid,
+            time,
+            type
+        });
+        newMetric = await newMetric.save()
+    } catch (err) {
+        return next({ status: 500, message: 'Error creating metric' })
     }
 })
 
