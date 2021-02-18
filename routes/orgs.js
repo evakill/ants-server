@@ -65,9 +65,9 @@ router.post('/post', async (req, res, next) => {
         const time = new Date();
         const metricType = "post";
         let newMetric = new Metric({
-            orgid,
-            time,
-            metricType
+            username: "test user id",
+            timetsamp: time,
+            type: metricType
         });
         newMetric = await newMetric.save();
         res.send({ post: newPost });
