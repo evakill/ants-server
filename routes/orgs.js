@@ -61,12 +61,7 @@ router.post('/post', async (req, res, next) => {
             endDate, 
             allDay
         })
-        newPost = await newPost.save()
-        res.send({ post: newPost })
-    } catch (err) {
-        return next({ status: 500, message: 'Error creating post' })
-    }
-    try {
+        newPost = await newPost.save();
         const time = new Date();
         const type = "post";
         let newMetric = new Metric({
@@ -74,9 +69,10 @@ router.post('/post', async (req, res, next) => {
             time,
             type
         });
-        newMetric = await newMetric.save()
+        newMetric = await newMetric.save();
+        res.send({ post: newPost });
     } catch (err) {
-        return next({ status: 500, message: 'Error creating metric' })
+        return next({ status: 500, message: 'Error creating post' })
     }
 })
 
