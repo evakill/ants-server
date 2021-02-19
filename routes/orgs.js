@@ -101,16 +101,15 @@ router.post('/post', async (req, res, next) => {
             endDate,
             allDay
         })
-        newPost = await newPost.save();
-        const time = new Date();
-        const metricType = "post";
+        newPost = await newPost.save()
+        res.send({ post: newPost })
         let newMetric = new Metric({
-            username: "test user id",
-            timetsamp: time,
-            type: metricType
-        });
-        newMetric = await newMetric.save();
-        res.send({ post: newPost });
+            userid: orgid,
+            timestamp: new Date(),
+            action: 'post',
+            postid: newPost._id
+        })
+        newMetric.save()
     } catch (err) {
         return next({ status: 500, message: 'Error creating post' })
     }

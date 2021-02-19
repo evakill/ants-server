@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 
 var MetricSchema = new Schema({
-    username: {
+    userid: {
         type: String,
         required: true,
     },
@@ -10,11 +10,18 @@ var MetricSchema = new Schema({
         type: Date,
         required: true,
     },
-    type: {
+    action: {
         type: String,
         required: true,
+    },
+    postid: {
+        type: String,
+        required: false
+    },
+    orgid: {
+        type: String,
+        required: false
     }
-
 })
 
 module.exports = mongoose.model('Metric', MetricSchema)

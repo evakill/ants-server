@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 var Post = require('../models/Post.js')
 var User = require('../models/User.js')
+const Metric = require('../models/Metric.js')
 
 // get all posts from an org
 router.get('/:orgid', async (req, res, next) => {
@@ -37,6 +38,13 @@ router.post('/like', async (req, res, next) => {
     user = await user.save()
     post = await post.save()
     res.send({ user, post })
+    let newMetric = new Metric({
+        userid: user._id,
+        timestamp: new Date(),
+        action: 'like',
+        postid: post._id
+    })
+    newMetric.save()
 })
 
 // user unlikes a post
@@ -51,6 +59,13 @@ router.post('/unlike', async (req, res, next) => {
     user = await user.save()
     post = await post.save()
     res.send({ user, post })
+    let newMetric = new Metric({
+        userid: user._id,
+        timestamp: new Date(),
+        action: 'unlike',
+        postid: post._id
+    })
+    newMetric.save()
 })
 
 module.exports = router

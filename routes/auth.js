@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 var User = require('../models/User.js')
 var Org = require('../models/Org.js')
+const Metric = require('../models/Metric.js')
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 
@@ -15,6 +16,12 @@ router.post('/login', async (req, res, next) => {
     if (!account) return next({ status: 403, message: 'Incorrect username' })
     return bcrypt.compare(password, account.password, function (err, result) {
         if (!result) return next({ status: 403, message: 'Incorrect password' })
+        let newMetric = new Metric({
+            userid: account._id,
+            timestamp: new Date(),
+            action: 'login'
+        })
+        newMetric.save()
         return res.send({ account })
     })
 })
@@ -40,6 +47,12 @@ router.post('/signup', async (req, res, next) => {
                       name
                   })
         newAccount = await newAccount.save()
+        let newMetric = new Metric({
+            userid: newAccount._id,
+            timestamp: new Date(),
+            action: 'signup'
+        })
+        newMetric.save()
         return res.send({ account: newAccount })
     })
 })
