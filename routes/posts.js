@@ -12,7 +12,7 @@ router.get('/:orgid', async (req, res, next) => {
 
 //get post by post id
 router.get('/post/:postid', async (req, res, next) => {
-    const post = await Post.findById(req.params.postid)
+    const post = await Post.findById(req.params.postid).populate('org')
     res.send({ post })
 })
 
@@ -34,7 +34,7 @@ router.post('/like', async (req, res, next) => {
     let post = await Post.findById(postid)
     if (!post) return next({ message: 'Post not found', status: 404 })
     user.liked.push(postid)
-    post.likes.push(user)
+    post.likes.push(user._id)
     user = await user.save()
     post = await post.save()
     res.send({ user, post })
