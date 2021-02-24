@@ -31,7 +31,7 @@ router.post('/like', async (req, res, next) => {
     const { userid, postid } = req.body
     let user = await User.findById(userid)
     if (!user) return next({ message: 'User not found', status: 404 })
-    let post = await Post.findById(postid)
+    let post = await Post.findById(postid).populate('org')
     if (!post) return next({ message: 'Post not found', status: 404 })
     user.liked.push(postid)
     post.likes.push(user._id)
@@ -52,7 +52,7 @@ router.post('/unlike', async (req, res, next) => {
     const { userid, postid } = req.body
     let user = await User.findById(userid)
     if (!user) return next({ message: 'User not found', status: 404 })
-    let post = await Post.findById(postid)
+    let post = await Post.findById(postid).populate('org')
     if (!post) return next({ message: 'Post not found', status: 404 })
     user.liked = user.liked.filter((p) => p && String(p) !== postid)
     post.likes = post.likes.filter((u) => u && String(u) !== userid)
