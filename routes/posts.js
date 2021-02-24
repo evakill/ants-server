@@ -42,7 +42,7 @@ router.post('/like', async (req, res, next) => {
         userid: user._id,
         timestamp: new Date(),
         action: 'like',
-        postid: post._id
+        postid: post._id,
     })
     newMetric.save()
 })
@@ -63,7 +63,7 @@ router.post('/unlike', async (req, res, next) => {
         userid: user._id,
         timestamp: new Date(),
         action: 'unlike',
-        postid: post._id
+        postid: post._id,
     })
     newMetric.save()
 })

@@ -49,7 +49,14 @@ router.get('/:id', async (req, res, next) => {
 // update profile
 router.post('/update/:id', async (req, res, next) => {
     try {
-        const { name, description, image, link, interests, locations } = req.body
+        const {
+            name,
+            description,
+            image,
+            link,
+            interests,
+            locations,
+        } = req.body
         let org = await Org.findById(req.params.id)
         if (!org) return next({ status: 404, message: 'Org not found' })
         if (interests) org.interests = interests
@@ -64,7 +71,6 @@ router.post('/update/:id', async (req, res, next) => {
         return next({ status: 500, message: 'Error updating org profile' })
     }
 })
-
 
 // upload image
 router.post('/img/:id', parser.single('image'), async (req, res, next) => {
@@ -86,7 +92,18 @@ router.post('/img/:id', parser.single('image'), async (req, res, next) => {
 // create post
 router.post('/post', async (req, res, next) => {
     try {
-        const { orgid, title, description, type, location, information, link, startDate, endDate, allDay } = req.body
+        const {
+            orgid,
+            title,
+            description,
+            type,
+            location,
+            information,
+            link,
+            startDate,
+            endDate,
+            allDay,
+        } = req.body
         const org = await Org.findById(orgid)
         if (!org) next({ status: 404, err: 'Organization not found' })
         let newPost = new Post({
@@ -99,7 +116,7 @@ router.post('/post', async (req, res, next) => {
             link,
             startDate,
             endDate,
-            allDay
+            allDay,
         })
         newPost = await newPost.save()
         res.send({ post: newPost })
@@ -107,7 +124,7 @@ router.post('/post', async (req, res, next) => {
             userid: orgid,
             timestamp: new Date(),
             action: 'post',
-            postid: newPost._id
+            postid: newPost._id,
         })
         newMetric.save()
     } catch (err) {

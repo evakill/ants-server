@@ -10,6 +10,7 @@ var usersRouter = require('./routes/users')
 var orgsRouter = require('./routes/orgs')
 var authRouter = require('./routes/auth')
 var postsRouter = require('./routes/posts')
+var analyticsRouter = require('./routes/analytics')
 
 var app = express()
 
@@ -32,7 +33,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 // Set up url whitelist and cors options for security
 var whitelist = [
     'http://localhost:3000',
-    'https://ants-senior-design-frontend.herokuapp.com'
+    'https://ants-senior-design-frontend.herokuapp.com',
 ]
 var corsOptions = {
     origin: (origin, callback) => {
@@ -42,12 +43,7 @@ var corsOptions = {
             callback(new Error('Not allowed by CORS'))
         }
     },
-    allowedHeaders: [
-        'Content-Type',
-        'Origin',
-        'X-Requested-With',
-        'Accept',
-    ],
+    allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept'],
     methods: ['POST', 'GET', 'OPTIONS'],
 }
 
@@ -58,6 +54,7 @@ app.use('/users', usersRouter)
 app.use('/orgs', orgsRouter)
 app.use('/posts', postsRouter)
 app.use('/auth', authRouter)
+app.use('/analytics', analyticsRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

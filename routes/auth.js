@@ -19,7 +19,7 @@ router.post('/login', async (req, res, next) => {
         let newMetric = new Metric({
             userid: account._id,
             timestamp: new Date(),
-            action: 'login'
+            action: 'login',
         })
         newMetric.save()
         return res.send({ account })
@@ -44,13 +44,13 @@ router.post('/signup', async (req, res, next) => {
                 : new Org({
                       username,
                       password: hash,
-                      name
+                      name,
                   })
         newAccount = await newAccount.save()
         let newMetric = new Metric({
             userid: newAccount._id,
             timestamp: new Date(),
-            action: 'signup'
+            action: 'signup',
         })
         newMetric.save()
         return res.send({ account: newAccount })

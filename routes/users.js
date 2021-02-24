@@ -39,14 +39,14 @@ router.post('/followOrg', async (req, res, next) => {
             user.following.push(orgID)
             user = await User.findOneAndUpdate(
                 { username: username },
-                { $set: { following:  user.following } }
+                { $set: { following: user.following } }
             )
         }
         let newMetric = new Metric({
             userid: user._id,
             timestamp: new Date(),
             action: 'follow',
-            orgid: orgID
+            orgid: orgID,
         })
         newMetric.save()
         return res.send({ account: user })
@@ -65,14 +65,14 @@ router.post('/unfollowOrg', async (req, res, next) => {
             user.following.splice(user.following.indexOf(orgID), 1)
             user = await User.findOneAndUpdate(
                 { username: username },
-                { $set: { following:  user.following } }
+                { $set: { following: user.following } }
             )
         }
         let newMetric = new Metric({
             userid: user._id,
             timestamp: new Date(),
             action: 'unfollow',
-            orgid: orgID
+            orgid: orgID,
         })
         newMetric.save()
         return res.send({ account: user })

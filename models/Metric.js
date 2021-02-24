@@ -16,12 +16,12 @@ var MetricSchema = new Schema({
     },
     postid: {
         type: String,
-        required: false
+        required: false,
     },
     orgid: {
         type: String,
-        required: false
-    }
+        required: false,
+    },
 })
 
 module.exports = mongoose.model('Metric', MetricSchema)
