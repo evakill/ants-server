@@ -34,6 +34,10 @@ var PostSchema = new Schema({
         type: String,
         required: false,
     },
+    volunteerInformation: {
+        type: String,
+        required: false,
+    },
     link: {
         type: String,
         required: false,
