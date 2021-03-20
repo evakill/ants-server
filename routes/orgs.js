@@ -7,6 +7,8 @@ const Metric = require('../models/Metric.js')
 const multer = require('multer')
 const cloudinary = require('cloudinary').v2
 const { CloudinaryStorage } = require('multer-storage-cloudinary')
+const groupBy = require('lodash/groupBy')
+const toPairs = require('lodash/toPairs')
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -31,6 +33,44 @@ router.get('/', async (req, res, next) => {
         res.send({ data: org })
     } catch (err) {
         return next({ status: 500, message: 'Error getting all orgs' })
+    }
+})
+
+// get 5 newest orgs
+router.get('/recent', async (req, res, next) => {
+    try {
+        const orgs = await Org.find().sort({ _id: '-1' }).limit(5)
+        res.send({ orgs })
+    } catch (err) {
+        return next({ status: 500, message: 'Error getting orgs' })
+    }
+})
+
+// get 5 orgs with most activity
+router.get('/trending', async (req, res, next) => {
+    try {
+        const tenDays = new Date()
+        tenDays.setDate(tenDays.getDate() - 10)
+        const metrics = await Metric.find({
+            action: { $in: ['post', 'follow', 'like'] },
+            timestamp: { $gte: tenDays },
+        })
+            .populate('orgid')
+            .populate('postid')
+        const orgGroups = groupBy(metrics, (m) =>
+            m.postid ? m.postid.org : m.orgid._id
+        )
+        const orgs = []
+        for (const [orgid, activity] of toPairs(orgGroups)) {
+            let org = await Org.findById(orgid)
+            org = Object.assign({ activity: activity.length }, org._doc)
+            orgs.push(org)
+        }
+        orgs.sort((a, b) => b.activity - a.activity)
+        res.send({ orgs: orgs.slice(0, 5) })
+    } catch (err) {
+        console.log(err)
+        return next({ status: 500, message: 'Error getting orgs' })
     }
 })
 

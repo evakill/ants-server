@@ -3,7 +3,8 @@ var Schema = mongoose.Schema
 
 var MetricSchema = new Schema({
     userid: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'User',
         required: true,
     },
     timestamp: {
@@ -15,11 +16,13 @@ var MetricSchema = new Schema({
         required: true,
     },
     postid: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'Post',
         required: false,
     },
     orgid: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'Org',
         required: false,
     },
 })
