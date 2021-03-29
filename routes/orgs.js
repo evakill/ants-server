@@ -9,6 +9,8 @@ const cloudinary = require('cloudinary').v2
 const { CloudinaryStorage } = require('multer-storage-cloudinary')
 const groupBy = require('lodash/groupBy')
 const toPairs = require('lodash/toPairs')
+const sortBy = require('lodash/sortBy')
+const find = require('lodash/find')
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -42,7 +44,7 @@ router.get('/recent', async (req, res, next) => {
         const orgs = await Org.find().sort({ _id: '-1' }).limit(5)
         res.send({ orgs })
     } catch (err) {
-        return next({ status: 500, message: 'Error getting orgs' })
+        return next({ status: 500, message: 'Error getting recent orgs' })
     }
 })
 
@@ -70,14 +72,61 @@ router.get('/trending', async (req, res, next) => {
         res.send({ orgs: orgs.slice(0, 5) })
     } catch (err) {
         console.log(err)
-        return next({ status: 500, message: 'Error getting orgs' })
+        return next({ status: 500, message: 'Error getting trending orgs' })
     }
+})
+
+// get recommended orgs for the user
+router.get('/recommended/:userid', async (req, res, next) => {
+    const { userid } = req.params
+    let user,
+        orgs = []
+    try {
+        user = await User.findById(userid).populate('following').exec()
+        let commonUsers = {}
+        for (const org of user.following) {
+            let followers = await User.find({})
+                .elemMatch('following', { $eq: org })
+                .populate('following')
+                .exec()
+            for (let f of followers) {
+                if (f._id == userid) continue
+                if (commonUsers[f._id]) {
+                    commonUsers[f._id][0] += 1
+                } else {
+                    commonUsers[f._id] = [1, f]
+                }
+            }
+        }
+        const rankedOrgs = {}
+        toPairs(commonUsers).forEach(([, [rank, u]]) => {
+            for (let org of u.following) {
+                if (
+                    find(
+                        user.following,
+                        (o) => String(o._id) == String(org._id)
+                    )
+                )
+                    continue
+                if (rankedOrgs[org._id]) {
+                    rankedOrgs[org._id][0] += rank
+                } else {
+                    rankedOrgs[org._id] = [rank, org]
+                }
+            }
+        })
+        const sortedOrgs = sortBy(toPairs(rankedOrgs), ([, [rank]]) => rank)
+        orgs = sortedOrgs.map(([, [, org]]) => org).slice(0, 5)
+    } catch (err) {
+        console.log(err)
+        return next({ status: 500, message: 'Error getting recommended orgs' })
+    }
+    res.send({ orgs })
 })
 
 // get org object from id param
 router.get('/:id', async (req, res, next) => {
     try {
-        console.log('ID here: ' + req.params.id)
         const org = await Org.findById(req.params.id)
         if (!org) next({ status: 404, err: 'Organization not found' })
         res.send({ account: org })
