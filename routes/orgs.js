@@ -149,21 +149,21 @@ router.post('/edit/:id', async (req, res, next) => {
             allDay,
         } = req.body
         console.log(req.body);
-        const org = await Org.findById(orgid)
-        const post = await Post.findById(req.params.id)
+        let org = await Org.findById(orgid)
+        let post = await Post.findById(req.params.id)
         console.log(post);
         if (!post) return next({ status: 404, message: 'Post not found' })
         if (!org) next({ status: 404, err: 'Organization not found' })
         if (title) post.title = title
         if (description) post.description = description
-        // if (link) post.link = link
-        // if (type) post.type = type 
-        // if (location) post.location = location 
-        // if (information) post.information = information 
-        // if (volunteerInformation) post.volunteerInformation = volunteerInformation 
-        // if (startDate) post.startDate = startDate 
-        // if (endDate) post.endDate = endDate 
-        // if (allDay) post.allDay = allDay 
+        if (link) post.link = link
+        if (type) post.type = type 
+        if (location) post.location = location 
+        if (information) post.information = information 
+        if (volunteerInformation) post.volunteerInformation = volunteerInformation 
+        if (startDate) post.startDate = startDate 
+        if (endDate) post.endDate = endDate 
+        if (allDay) post.allDay = allDay 
         console.log('checkpoint');
 
         post = await post.save();
