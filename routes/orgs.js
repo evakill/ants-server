@@ -56,17 +56,17 @@ router.get('/trending', async (req, res, next) => {
         const metrics = await Metric.find({
             action: { $in: ['post', 'follow', 'like'] },
             timestamp: { $gte: tenDays },
-        })
-            .populate('orgid')
-            .populate('postid')
+        }).populate('postid')
         const orgGroups = groupBy(metrics, (m) =>
-            m.postid ? m.postid.org : m.orgid._id
+            m.postid ? m.postid.org : m.orgid
         )
         const orgs = []
         for (const [orgid, activity] of toPairs(orgGroups)) {
-            let org = await Org.findById(orgid)
-            org = Object.assign({ activity: activity.length }, org._doc)
-            orgs.push(org)
+            if (orgid && orgid !== 'undefined') {
+                let org = await Org.findById(orgid)
+                org = Object.assign({ activity: activity.length }, org._doc)
+                orgs.push(org)
+            }
         }
         orgs.sort((a, b) => b.activity - a.activity)
         res.send({ orgs: orgs.slice(0, 5) })
@@ -239,26 +239,23 @@ router.post('/edit/:id', async (req, res, next) => {
             endDate,
             allDay,
         } = req.body
-        console.log(req.body);
         let org = await Org.findById(orgid)
         let post = await Post.findById(req.params.id)
-        console.log(post);
         if (!post) return next({ status: 404, message: 'Post not found' })
         if (!org) next({ status: 404, err: 'Organization not found' })
         if (title) post.title = title
         if (description) post.description = description
         if (link) post.link = link
-        if (type) post.type = type 
-        if (location) post.location = location 
-        if (information) post.information = information 
-        if (volunteerInformation) post.volunteerInformation = volunteerInformation 
-        if (startDate) post.startDate = startDate 
-        if (endDate) post.endDate = endDate 
-        if (allDay) post.allDay = allDay 
-        console.log('checkpoint');
+        if (type) post.type = type
+        if (location) post.location = location
+        if (information) post.information = information
+        if (volunteerInformation)
+            post.volunteerInformation = volunteerInformation
+        if (startDate) post.startDate = startDate
+        if (endDate) post.endDate = endDate
+        if (allDay) post.allDay = allDay
 
-        post = await post.save();
-        console.log('checkpoint 2');
+        post = await post.save()
         res.send({ post: post })
     } catch (err) {
         return next({ status: 500, message: 'Error updating this post' })

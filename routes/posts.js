@@ -75,14 +75,14 @@ router.post('/delete', async (req, res, next) => {
         const { orgid, postid } = req.body
         const post = await Post.findById(postid)
         if (!post) next({ status: 404, err: 'Post not found' })
-        Post.deleteOne({ "_id": postid }, function (err) {
-            if(err) console.log(err);
-            console.log("Successful deletion");
-          })
-          res.send({ "success" : true })
+        Post.deleteOne({ _id: postid }, function (err) {
+            if (err) console.log(err)
+            console.log('Successful deletion')
+        })
+        res.send({ success: true })
     } catch (err) {
         return next({ status: 500, message: 'Error deleting post: ' + err })
-    } 
+    }
 })
 
 module.exports = router
